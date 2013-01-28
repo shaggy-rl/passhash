@@ -52,7 +52,7 @@ Example Prompt
     passhash: Please enter a password:  
     passhash: Please re-enter your password:  
     passhash: Number of iterations (default 1):  (1) 
-    undefined:1N1SnR2+aqJPLgtdBZ3Bip4epRzLNAazg/cdqAOIDx65yxiifsf50DE/vXbHFoXtrM2ZbP3N2hq+d20LwkzwLDks//4E726se8iz8cwSgZjnKIYfzGUD6SPtZr7GQuR60TpC7qL9D9tXVHGjz+XS0E1AqaF7sdVna+2FmzQbgLc=:a9901ced04776219b0c59468aba567d16252ad17463ca8d7933206dde70e11b5e914be33d1611dde03e772ddc1dbfd70d5ef6368d9d7e7112ef77d6a539d1d3a:1
+    test:1N1SnR2+aqJPLgtdBZ3Bip4epRzLNAazg/cdqAOIDx65yxiifsf50DE/vXbHFoXtrM2ZbP3N2hq+d20LwkzwLDks//4E726se8iz8cwSgZjnKIYfzGUD6SPtZr7GQuR60TpC7qL9D9tXVHGjz+XS0E1AqaF7sdVna+2FmzQbgLc=:a9901ced04776219b0c59468aba567d16252ad17463ca8d7933206dde70e11b5e914be33d1611dde03e772ddc1dbfd70d5ef6368d9d7e7112ef77d6a539d1d3a:1
 
 Why?
 ----
