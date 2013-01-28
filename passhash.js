@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /*
  * passhash
  *
@@ -28,7 +29,7 @@ function usage() {
   return [
     'Usage: passhash',
     '',
-    'Easily and securily hash passwords with a variable amount of iterations of SHA512.',
+    'Easily and securely hash passwords with a variable amount of iterations of SHA512.',
     '',
     'Takes in an optional username and number of iterations and then propmts for a password.',
     '',
