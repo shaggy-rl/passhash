@@ -1,6 +1,6 @@
 {
   "name": "passhash",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Easily and securely hash passwords with a variable amount of SHA512 iterations.",
   "main": "passhash.js",
   "scripts": {

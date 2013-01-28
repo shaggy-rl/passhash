@@ -31,7 +31,7 @@ function usage() {
     '',
     'Easily and securely hash passwords with a variable amount of iterations of SHA512.',
     '',
-    'Takes in an optional username and number of iterations and then propmts for a password.',
+    'Takes in an optional username and number of iterations and then prompts for a password.',
     '',
     'If a username or number of iterations is not provided it will prompt for them.',
     '',
