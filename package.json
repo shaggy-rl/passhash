@@ -23,6 +23,8 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "dependencies": {
-    "prompt": "~0.2.9"
+    "prompt": "~0.2.9",
+    "posix-getopt": "~1.0.0",
+    "latest": "~0.1.0"
   }
 }
