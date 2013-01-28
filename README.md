@@ -16,7 +16,7 @@ Usage
 -----
 
     -i, --iterations <number>        number of SHA512 iterations (default is set to 1)
-    -b, --bits <number>              number of bits to use for crypto random salt, must be >= 128 (default 128)
+    -b, --bytes <number>             number of bytes to use for crypto random salt, must be >= 128 (default 128)
     -h, --help                       print this message and exit
     -u, --username <name>            username to use for entry
     -U, --updates                    check for available updates
