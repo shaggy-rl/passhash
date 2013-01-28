@@ -1,7 +1,11 @@
 /*
+ * passhash
+ *
  * password hashing using sha512 and random salt
  *
- * Author: Alexander Shagla-McKotch
+ * Author: Alexander Shagla-McKotch <shagla@gmai.com>
+ *
+ * Contributor: Dave Eddy <dave@daveeddy.com> github.com/bahamas10
  *
  * License: MIT
 */
@@ -12,7 +16,7 @@ var prom = require('prompt'),
     getopt = require('posix-getopt')
     package = require('./package.json');
 
-var format = '{name}:{salt}:{hash}:{iterations}'
+var format = '{username}:{salt}:{hash}:{iterations}'
 
 /*
  * Usage statement
@@ -31,10 +35,24 @@ function usage() {
     'If a username or number of iterations is not provided it will prompt for them.',
     '',
     '-i, --iterations <number>        number of SHA512 iterations (default is set to 1)',
+    '-b, --bits <number>              number of bits to use for crypto random salt, must be >= 128 (default 128)',
     '-h, --help                       print this message and exit',
     '-u, --username <name>            username to use for entry',
     '-U, --updates                    check for available updates',
-    '-v, --version                    print the version number and exit'
+    '-f, --format                     change format of output',
+    '-v, --version                    print the version number and exit',
+    '',
+    'Deafault output',
+    '',
+    'username:salt:hash:iterations',
+    '',
+    'Example format options',
+    '',
+    'node passhash.js -u test -i 22 -f \'{username} <<>> {salt} <<>> {hash}\'',
+    '',
+    'Output',
+    '',
+    'username <<>> salt <<>> hash'
   ].join('\n');
 }
 
@@ -72,6 +90,7 @@ var schema = {
 // get command line arguments
 var options = [
   'f:(format)',
+  'b:(bits)',
   'i:(iterations)',
   'h(help)',
   'u:(username)',
@@ -81,9 +100,14 @@ var options = [
 var parser = new getopt.BasicParser(options, process.argv);
 var iterations = 1;
 var username;
+var bits = 128;
 while ((option = parser.getopt()) !== undefined) {
   switch (option.option) {
     case 'f': format = option.optarg; break;
+    case 'b': bits = option.optarg; if (+bits < 128) {
+                console.log('ERROR: Number of bits must be larger than 128.');
+                process.exit(1);
+              } break;
     case 'i': iterations = option.optarg; delete schema.properties.iterations; break;
     case 'h': console.log(usage()); process.exit(0);
     case 'u': username = option.optarg; delete schema.properties.user_name; break;
@@ -122,7 +146,7 @@ prom.get(schema, function (err, result) {
    * using the salt and password create a salted sha512 hash
    * output the username, salt, and salted hash ':' delimited
    */
-  crypto.randomBytes(128, function(err, buf) {
+  crypto.randomBytes(+bits, function(err, buf) {
     if (err) throw err;
     var salt = buf.toString('base64');
     var hash = result.password;
