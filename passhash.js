@@ -36,7 +36,7 @@ function usage() {
     'If a username or number of iterations is not provided it will prompt for them.',
     '',
     '-i, --iterations <number>        number of SHA512 iterations (default is set to 1)',
-    '-b, --bits <number>              number of bits to use for crypto random salt, must be >= 128 (default 128)',
+    '-b, --bytes <number>             number of bytes to use for crypto random salt, must be >= 128 (default 128)',
     '-h, --help                       print this message and exit',
     '-u, --username <name>            username to use for entry',
     '-U, --updates                    check for available updates',
@@ -91,7 +91,7 @@ var schema = {
 // get command line arguments
 var options = [
   'f:(format)',
-  'b:(bits)',
+  'b:(bytes)',
   'i:(iterations)',
   'h(help)',
   'u:(username)',
@@ -101,12 +101,12 @@ var options = [
 var parser = new getopt.BasicParser(options, process.argv);
 var iterations = 1;
 var username;
-var bits = 128;
+var bytes = 128;
 while ((option = parser.getopt()) !== undefined) {
   switch (option.option) {
     case 'f': format = option.optarg; break;
-    case 'b': bits = option.optarg; if (+bits < 128) {
-                console.log('ERROR: Number of bits must be larger than 128.');
+    case 'b': bytes = option.optarg; if (+bytes < 128) {
+                console.log('ERROR: Number of bytes must be larger than 128.');
                 process.exit(1);
               } break;
     case 'i': iterations = option.optarg; delete schema.properties.iterations; break;
@@ -131,7 +131,7 @@ prom.start();
 prom.get(schema, function (err, result) {
 
   // if username was not provided on command line set username from prompt
-  if (result.username) username = result.username;
+  if (result.user_name) username = result.user_name;
 
   // if iterations is not provided on command line set iterations from prompt
   if (result.iterations) iterations = result.iterations;
@@ -147,7 +147,7 @@ prom.get(schema, function (err, result) {
    * using the salt and password create a salted sha512 hash
    * output the username, salt, and salted hash ':' delimited
    */
-  crypto.randomBytes(+bits, function(err, buf) {
+  crypto.randomBytes(+bytes, function(err, buf) {
     if (err) throw err;
     var salt = buf.toString('base64');
     var hash = result.password;
