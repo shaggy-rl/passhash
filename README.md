@@ -15,7 +15,7 @@ Installation
 Usage
 -----
 
-    -i, --iterations <number>        number of SHA512 iterations (default is set to 1)
+    -i, --iterations <number>        number of SHA512 iterations (default is set to 5000)
     -b, --bytes <number>             number of bytes to use for crypto random salt, must be >= 128 (default 128)
     -h, --help                       print this message and exit
     -u, --username <name>            username to use for entry
@@ -51,8 +51,8 @@ Example Prompt
     passhash: username:  test
     passhash: Please enter a password:  
     passhash: Please re-enter your password:  
-    passhash: Number of iterations (default 1):  (1) 
-    test:1N1SnR2+aqJPLgtdBZ3Bip4epRzLNAazg/cdqAOIDx65yxiifsf50DE/vXbHFoXtrM2ZbP3N2hq+d20LwkzwLDks//4E726se8iz8cwSgZjnKIYfzGUD6SPtZr7GQuR60TpC7qL9D9tXVHGjz+XS0E1AqaF7sdVna+2FmzQbgLc=:a9901ced04776219b0c59468aba567d16252ad17463ca8d7933206dde70e11b5e914be33d1611dde03e772ddc1dbfd70d5ef6368d9d7e7112ef77d6a539d1d3a:1
+    passhash: Number of iterations (default 5000):  (5000) 
+    test:1N1SnR2+aqJPLgtdBZ3Bip4epRzLNAazg/cdqAOIDx65yxiifsf50DE/vXbHFoXtrM2ZbP3N2hq+d20LwkzwLDks//4E726se8iz8cwSgZjnKIYfzGUD6SPtZr7GQuR60TpC7qL9D9tXVHGjz+XS0E1AqaF7sdVna+2FmzQbgLc=:a9901ced04776219b0c59468aba567d16252ad17463ca8d7933206dde70e11b5e914be33d1611dde03e772ddc1dbfd70d5ef6368d9d7e7112ef77d6a539d1d3a:5000
 
 Why?
 ----
@@ -62,7 +62,7 @@ Now you can store the output of `passhash` into a file and code your node server
 For added security you can choose a number of iterations and not store it in the file, using it only in your server code for the password validation.
 Each user could also have a different number of iterations. Is this still somewhat insecure? Yes, someone could take a line from the file and
 if the user choose a weak password and the attacker knew the number of iterations and the salt they could still use brute force.
-You can't protect against stupid users. 
+You can't protect against stupid users.
 
 License
 -------

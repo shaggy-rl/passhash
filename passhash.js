@@ -4,7 +4,7 @@
  *
  * password hashing using sha512 and random salt
  *
- * Author: Alexander Shagla-McKotch <shagla@gmai.com>
+ * Author: Alexander Shagla-McKotch <shagla@gmail.com>
  *
  * Contributor: Dave Eddy <dave@daveeddy.com> github.com/bahamas10
  *
@@ -35,7 +35,7 @@ function usage() {
     '',
     'If a username or number of iterations is not provided it will prompt for them.',
     '',
-    '-i, --iterations <number>        number of SHA512 iterations (default is set to 1)',
+    '-i, --iterations <number>        number of SHA512 iterations (default is set to 5000)',
     '-b, --bytes <number>             number of bytes to use for crypto random salt, must be >= 128 (default 128)',
     '-h, --help                       print this message and exit',
     '-u, --username <name>            username to use for entry',
@@ -80,10 +80,10 @@ var schema = {
        required: true
      },
      iterations: {
-      description: 'Number of iterations (default 1)'.magenta,
+      description: 'Number of iterations (default 5000)'.magenta,
       pattern: /^[0-9]+$/,
       message: 'Must be a number',
-      default: 1,
+      default: 5000,
     }
   }
 };
