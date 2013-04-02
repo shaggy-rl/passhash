@@ -1,7 +1,7 @@
 {
   "name": "passhash",
-  "version": "0.0.6",
-  "description": "Easily and securely hash passwords with a variable amount of SHA512 iterations.",
+  "version": "0.0.7",
+  "description": "Easily and securely hash passwords with a variable amount of SHA512 iterations. bcrypt is also supported.",
   "main": "passhash.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -17,22 +17,24 @@
     "hashing",
     "htaccess",
     "htpasswd",
+    "bcrypt",
     "sha-512",
     "SHA-512"
   ],
   "author": "Alexander Shagla-McKotch",
   "contributors": [
     "Dave Eddy <dave@daveeddy.com> github.com/bahamas10"
-    ],
+  ],
   "license": "MIT",
   "readmeFilename": "README.md",
   "bin": {
-    "passhash":"./passhash.js"
+    "passhash": "./passhash.js"
   },
   "preferGlobal": true,
   "dependencies": {
     "prompt": "~0.2.9",
     "posix-getopt": "~1.0.0",
+    "bcrypt": "~0.7.5",
     "latest": "~0.1.0"
   }
 }
