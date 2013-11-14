@@ -15,6 +15,7 @@
 // initial variables and requires
 var prom = require('prompt'),
     crypto = require('crypto'),
+    fs = require('fs');
     getopt = require('posix-getopt'),
     bcrypt = require('bcrypt'),
     package = require('./package.json');
@@ -39,14 +40,15 @@ function usage() {
     '',
     'If a username or number of iterations is not provided it will prompt for them.',
     '',
-    '-t --hash-type <number>          1 for SHA512 or 2 for bcrypt',
+    '-b, --bytes <number>             number of bytes to use for crypto random salt, must be >= 128 (default 128)',
+    '-f, --format                     change format of output. Not supported if using bcrypt as hash type.',
+    '-h, --help                       print this message and exit',
     '-i, --iterations <number>        number of SHA512 iterations (default is set to 5000)',
     '-r, --rounds <number>            number of rounds for bcrypt',
-    '-b, --bytes <number>             number of bytes to use for crypto random salt, must be >= 128 (default 128)',
-    '-h, --help                       print this message and exit',
+    '-s, --stdin                      take the password over stdin',
+    '-t, --hash-type <type>           "sha-512" or "bcrypt"',
     '-u, --username <name>            username to use for entry',
     '-U, --updates                    check for available updates',
-    '-f, --format                     change format of output. Not supported if using bcrypt as hash type.',
     '-v, --version                    print the version number and exit',
     '',
     'Deafault output',
@@ -70,9 +72,7 @@ function usage() {
 var schema = {
     properties: {
       hash_type: {
-        description: 'Enter 1 for SHA512 or 2 for bcrypt'.magenta,
-        pattern: /^1|2$/,
-        message: 'Must be either 1 or 2',
+        description: 'sha-512 or bcrypt'.magenta,
         required: true
       },
       user_name: {
@@ -101,12 +101,13 @@ var schema = {
 
 // get command line arguments
 var options = [
-  't:(hash-type)',
-  'f:(format)',
-  'r:(rounds)',
   'b:(bytes)',
-  'i:(iterations)',
+  'f:(format)',
   'h(help)',
+  'i:(iterations)',
+  'r:(rounds)',
+  's(stdin)',
+  't:(hash-type)',
   'u:(username)',
   'U(updates)',
   'v(version)'
@@ -115,24 +116,37 @@ var parser = new getopt.BasicParser(options, process.argv);
 var iterations = 1;
 var rounds = 1;
 var username;
+var passwd;
 var type;
 var bytes = 128;
 while ((option = parser.getopt()) !== undefined) {
   switch (option.option) {
     case 'f': format = option.optarg; break;
-    case 't': type = option.optarg; if (type != 1 && type != 2) {
-                console.log('ERROR: Hash type must be either 1 or 2.');
-                process.exit(1);
-              } delete schema.properties.hash_type; break;
-    case 'r': rounds = option.optarg; if (+rounds < 0) {
-                console.log('ERROR: Number of rounds must be larger than 0.');
-                process.exit(1);
-              } delete schema.properties.iterations; break;
-    case 'b': bytes = option.optarg; if (+bytes < 128) {
-                console.log('ERROR: Number of bytes must be larger than 128.');
-                process.exit(1);
-              } break;
+    case 't':
+      type = option.optarg;
+      delete schema.properties.hash_type;
+      break;
+    case 'r':
+      rounds = option.optarg;
+      if (+rounds < 0) {
+        console.log('ERROR: Number of rounds must be larger than 0.');
+        process.exit(1);
+      }
+      delete schema.properties.iterations;
+      break;
+    case 'b':
+      bytes = option.optarg;
+      if (+bytes < 128) {
+        console.log('ERROR: Number of bytes must be larger than 128.');
+        process.exit(1);
+      }
+      break;
     case 'i': iterations = option.optarg; delete schema.properties.iterations; break;
+    case 's':
+      password = fs.readFileSync('/dev/stdin', 'utf-8');
+      delete schema.properties.password;
+      delete schema.properties.repeat_password;
+      break;
     case 'h': console.log(usage()); process.exit(0);
     case 'u': username = option.optarg; delete schema.properties.user_name; break;
     case 'U':require('latest').checkupdate(package, function(ret, msg) {
@@ -167,33 +181,39 @@ prom.get(schema, function (err, result) {
   if (result.iterations) iterations = result.iterations;
 
   // check for password mismatch and exits on mismatch
+  if (password)
+    result.password = result.repeat_password = password;
   if (result.password !== result.repeat_password) {
     console.log('ERROR: Password mismatch.');
     process.exit(1);
   }
-  if (type == 1) {
-    /* generate 128 bit crypto random bytes
-     * save the byte buffer as a base64 encoded salt
-     * using the salt and password create a salted sha512 hash
-     * output the username, salt, and salted hash ':' delimited
-     */
-    crypto.randomBytes(+bytes, function(err, buf) {
-      if (err) throw err;
-      var salt = buf.toString('base64');
-      var hash = result.password;
-      for (var i = 0; i<=iterations; i++) {
-        hash = crypto.createHmac('sha512', salt).update(hash).digest('hex');
-      }
-      var s = format
-                .replace('{username}', username)
-                .replace('{salt}', salt)
-                .replace('{hash}', hash)
-                .replace('{iterations}', iterations);
-      console.log(s);
-    });
-  }else{
-    var salt = bcrypt.genSaltSync(+rounds);
-    var hash = bcrypt.hashSync(result.password, salt);
-    console.log('%s:%s', username, hash);
+  switch (type) {
+    case 'bcrypt':
+      var salt = bcrypt.genSaltSync(+rounds);
+      var hash = bcrypt.hashSync(result.password, salt);
+      console.log('%s:%s', username, hash);
+      break;
+    case 'sha-512':
+    default:
+      /* generate 128 bit crypto random bytes
+       * save the byte buffer as a base64 encoded salt
+       * using the salt and password create a salted sha512 hash
+       * output the username, salt, and salted hash ':' delimited
+       */
+      crypto.randomBytes(+bytes, function(err, buf) {
+        if (err) throw err;
+        var salt = buf.toString('base64');
+        var hash = result.password;
+        for (var i = 0; i<=iterations; i++) {
+          hash = crypto.createHmac('sha512', salt).update(hash).digest('hex');
+        }
+        var s = format
+                  .replace('{username}', username)
+                  .replace('{salt}', salt)
+                  .replace('{hash}', hash)
+                  .replace('{iterations}', iterations);
+        console.log(s);
+      });
+      break;
   }
 });
